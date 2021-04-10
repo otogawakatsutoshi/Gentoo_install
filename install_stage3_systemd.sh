@@ -15,7 +15,6 @@ mkfs.ext4 /dev/sda4
 
 # print partition list
 parted -s -a optimal /dev/sda p
-swapon /dev/sda3
 
 # install stage3 
 
@@ -47,13 +46,14 @@ chroot /mnt/gentoo /bin/bash
 source /etc/profile
 export PS1="(chroot) ${PS1}"
 
-mount /dev/sda2 /boot
+mount /dev/sda1 /boot
 
 # sync package and source 
 emerge-webrsync
 
 # update all package
 emerge --update --deep --newuse @world
+emerge app-editors/vim
 
 # set timezone 
 echo "Asia/Tokyo" > /etc/timezone
@@ -69,3 +69,15 @@ echo ja_JP.UTF-8 UTF-8 >> /etc/locale.gen
 echo ja_JP EUC-JP >> /etc/locale.gen
 
 env-update && source /etc/profile && export PS1="(chroot) ${PS1}"
+
+# install kernel
+emerge sys-kernel/gentoo-sources
+
+emerge sys-kernel/genkernel
+
+
+echo "/dev/sda1	/boot	ext2	defaults	0 2"  >> /etc/fstab
+genkernel all
+
+# install firmware
+emerge sys-kernel/linux-firmware
