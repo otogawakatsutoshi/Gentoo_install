@@ -10,6 +10,8 @@ mount /dev/sda2 /boot
 # sync package and source 
 emerge-webrsync
 
+emerge --sync
+
 # update all package
 emerge --update --deep --newuse @world
 emerge app-editors/vim
@@ -19,8 +21,6 @@ echo "Asia/Tokyo" > /etc/timezone
 emerge --config sys-libs/timezone-data
 
 # set locale
-# locale-gen
-
 echo en_US ISO-8859-1 >> /etc/locale.gen
 echo en_US.UTF-8 UTF-8 >> /etc/locale.gen
 echo ja_JP.EUC-JP EUC-JP >> /etc/locale.gen
