@@ -5,9 +5,8 @@
 
 parted -s -a optimal /dev/sda mklabel gpt -- unit mib mkpart primary 1     3 name 1 grub set 1 bios_grub on
 parted -s -a optimal /dev/sda             -- unit mib mkpart primary 3   131 name 2 boot set 2 boot on
-parted -s -a optimal /dev/sda             -- unit mib mkpart primary 131 643 name 3 swap 
+parted -s -a optimal /dev/sda             -- unit mib mkpart primary 131 643 name 3 swap set 3 swap on
 parted -s -a optimal /dev/sda             -- unit mib mkpart primary 643  -1 name 4 rootfs
-
 
 # create file system
 mkfs.ext2 /dev/sda2
@@ -28,7 +27,7 @@ tar xpvf stage3-*.tar.xz --xattrs-include='*.*' --numeric-owner
 rm -rf *.tar.xz
 
 # add mirror
-echo GENTOO_MIRRORS=\"https://ftp.jaist.ac.jp/pub/Linux/Gentoo/ rsync://ftp.jaist.ac.jp/pub/Linux/Gentoo/ https://ftp.riken.jp/Linux/gentoo/ rsync://ftp.riken.jp/gentoo/\" >> etc/portage/make.conf
+echo GENTOO_MIRRORS=\"https://ftp.jaist.ac.jp/pub/Linux/Gentoo/ rsync://ftp.jaist.ac.jp/pub/Linux/Gentoo/ https://ftp.riken.jp/Linux/gentoo/ rsync://ftp.riken.jp/gentoo/\" >> /mnt/gentoo/etc/portage/make.conf
 
 # create ebuild repository
 mkdir --parents /mnt/gentoo/etc/portage/repos.conf
@@ -49,3 +48,24 @@ source /etc/profile
 export PS1="(chroot) ${PS1}"
 
 mount /dev/sda2 /boot
+
+# sync package and source 
+emerge-webrsync
+
+# update all package
+emerge --update --deep --newuse @world
+
+# set timezone 
+echo "Asia/Tokyo" > /etc/timezone
+emerge --config sys-libs/timezone-data
+
+# set locale
+# locale-gen
+
+echo en_US ISO-8859-1 >> /etc/locale.gen
+echo en_US.UTF-8 UTF-8 >> /etc/locale.gen
+echo ja_JP.EUC-JP EUC-JP >> /etc/locale.gen
+echo ja_JP.UTF-8 UTF-8 >> /etc/locale.gen
+echo ja_JP EUC-JP >> /etc/locale.gen
+
+env-update && source /etc/profile && export PS1="(chroot) ${PS1}"
