@@ -36,8 +36,13 @@ emerge sys-kernel/gentoo-sources
 
 emerge sys-kernel/genkernel
 
+# setting fstab
+cat << END >> /etc/fstab
+/dev/sda2   /boot        ext2    defaults             0 2
+/dev/sda3   none         swap    sw                   0 0
+/dev/sda3   /            ext4    noatime              0 1
+END
 
-echo "/dev/sda1	/boot	ext2	defaults	0 2"  >> /etc/fstab
 genkernel all
 
 # install firmware
