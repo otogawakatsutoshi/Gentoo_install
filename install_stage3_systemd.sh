@@ -26,7 +26,7 @@ tar xpvf stage3-*.tar.xz --xattrs-include='*.*' --numeric-owner
 rm -rf *.tar.xz
 
 # add mirror
-echo GENTOO_MIRRORS=\"https://ftp.jaist.ac.jp/pub/Linux/Gentoo/ rsync://ftp.jaist.ac.jp/pub/Linux/Gentoo/ https://ftp.riken.jp/Linux/gentoo/ rsync://ftp.riken.jp/gentoo/\" >> /mnt/gentoo/etc/portage/make.conf
+# echo GENTOO_MIRRORS=\"https://ftp.jaist.ac.jp/pub/Linux/Gentoo/ rsync://ftp.jaist.ac.jp/pub/Linux/Gentoo/ https://ftp.riken.jp/Linux/gentoo/ rsync://ftp.riken.jp/gentoo/\" >> /mnt/gentoo/etc/portage/make.conf
 
 # create ebuild repository
 mkdir --parents /mnt/gentoo/etc/portage/repos.conf

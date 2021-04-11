@@ -47,3 +47,6 @@ genkernel all
 
 # install firmware
 emerge sys-kernel/linux-firmware
+
+
+# /etc/conf.d/keymaps
