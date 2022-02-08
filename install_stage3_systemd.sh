@@ -19,7 +19,7 @@ parted -s -a optimal /dev/sda p
 # install stage3 
 
 cd /mnt/gentoo
-wget https://ftp.jaist.ac.jp/pub/Linux/Gentoo/releases/amd64/autobuilds/current-stage3-amd64-systemd/stage3-amd64-systemd-20210407T214504Z.tar.xz
+wget https://ftp.jaist.ac.jp/pub/Linux/Gentoo/releases/amd64/autobuilds/current-stage3-amd64-desktop-systemd/stage3-amd64-desktop-systemd-20220130T170547Z.tar.xz
 
 tar xpvf stage3-*.tar.xz --xattrs-include='*.*' --numeric-owner
 
