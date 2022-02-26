@@ -1,0 +1,3 @@
+
+timestamp=20220220T170542Z
+mkisofs -r -J -V "Gentoo" -o gentoo-${timestamp}.iso /run/media/katsutoshi/7148-6906
