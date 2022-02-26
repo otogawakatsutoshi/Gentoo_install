@@ -74,7 +74,17 @@ net-setup
 # install stage3 
 
 cd /mnt/gentoo
+# stage3
 wget https://ftp.jaist.ac.jp/pub/Linux/Gentoo/releases/amd64/autobuilds/current-stage3-amd64-desktop-systemd/stage3-amd64-desktop-systemd-20220130T170547Z.tar.xz
+# checksum
+
+wget https://ftp.jaist.ac.jp/pub/Linux/Gentoo/releases/amd64/autobuilds/current-stage3-amd64-desktop-systemd/stage3-amd64-desktop-systemd-20220130T170547Z.tar.xz.DIGESTS
+wget https://ftp.jaist.ac.jp/pub/Linux/Gentoo/releases/amd64/autobuilds/current-stage3-amd64-desktop-systemd/stage3-amd64-desktop-systemd-20220130T170547Z.tar.xz.CONTENTS.gz
+
+# 失敗した時の出戻りが大きいからチェック
+# checksum
+
+sha512sum -c < stage3-amd64-desktop-systemd-20220220T170542Z.tar.xz.DIGESTS
 
 tar xpvf stage3-*.tar.xz --xattrs-include='*.*' --numeric-owner
 # if you use systemd and stage3 desktop, /mnt/gentoo disk size 2.8G
