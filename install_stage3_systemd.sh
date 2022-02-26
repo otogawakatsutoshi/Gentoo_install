@@ -66,6 +66,18 @@ cd /mnt/gentoo
 wget https://ftp.jaist.ac.jp/pub/Linux/Gentoo/releases/amd64/autobuilds/current-stage3-amd64-desktop-systemd/stage3-amd64-desktop-systemd-20220130T170547Z.tar.xz
 
 tar xpvf stage3-*.tar.xz --xattrs-include='*.*' --numeric-owner
+# if you use systemd and stage3 desktop, /mnt/gentoo disk size 2.8G
+# /mnt/gentoo is tmpfs, boot diside
+# ぶーたぶるusbから起動時に自動的にpcのramの半分の値がtmpfsの値になるため、
+# memory 4Gなら半分の2Gだけ使われるので、tarの展開に失敗する。
+# df -h で使われているtmpfsの量が確認できる。
+# その場合は動的にtmpfsの量を変更すると良い。
+# [tmpfs]https://wiki.archlinux.jp/index.php/Tmpfs
+# tmpfsがroot ディレクトリのとき。
+# mount -o remount,size=3G,noatime /
+# これだと展開はできるが、のちのemerge-webrsyncで容量不足になるため下のようにする。
+# mount -o remount,size=3584M,noatime /
+# メモリが8G未満だと問題が起きる。
 
 rm -rf *.tar.xz
 
