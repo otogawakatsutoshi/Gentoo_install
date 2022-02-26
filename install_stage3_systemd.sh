@@ -2,6 +2,16 @@
 
 # [install cookbook](https://wiki.gentoo.org/wiki/Handbook:AMD64)
 
+# Model: BUFFALO USB Flash Disk (scsi)
+# Disk /dev/sdd: 8097MB
+# Sector size (logical/physical): 512B/512B
+# Partition Table: msdos
+# Disk Flags: 
+
+# Number  Start   End     Size    Type     File system  Flags
+#  1      4194kB  8096MB  8092MB  primary  fat32
+
+
 # 512byte=1sector
 # 1mib=1024byte
 
