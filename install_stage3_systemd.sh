@@ -90,6 +90,10 @@ tar xpvf stage3-*.tar.xz --xattrs-include='*.*' --numeric-owner
 # mount -o remount,size=3584M,noatime /
 # メモリが8G未満だと問題が起きる。
 
+# systemd-amd64だけだと/は1.2GBで済む。がやはり、webrsyncでスペースが足りなくなる。
+# mount -o remount,size=3G,noatime /
+# mount -t ext4 /dev/sdc3 -o remount,size=3G,noatime /
+
 rm -rf *.tar.xz
 
 # add mirror
