@@ -60,6 +60,17 @@ mkfs.ext4 /dev/sda3
 # print partition list
 parted -s -a optimal /dev/sda p
 
+# nicを確認
+ip link show
+
+# 下のように使うnicを起動させる。
+ip link set wlp2s0b1 up
+
+# net-setupは設定が間違っていても普通にコマンドは通るので
+# ping -c 3 8.8.8.8
+# で送って確認。
+net-setup
+
 # install stage3 
 
 cd /mnt/gentoo
