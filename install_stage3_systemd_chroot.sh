@@ -12,9 +12,15 @@ emerge-webrsync
 
 emerge --sync
 
+# stage3 などに対して適切なprofileか確認。
+eselect profile list
+
 # update all package
 emerge --update --deep --newuse @world
 emerge app-editors/vim
+
+echo "# set default editor for root." >> /root/.bashrc
+echo "export EDITOR=$(command -v vim)" >> /root/.bashrc
 
 # set timezone 
 echo "Asia/Tokyo" > /etc/timezone
