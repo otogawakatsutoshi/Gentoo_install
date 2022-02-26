@@ -10,7 +10,8 @@ mount /dev/sda2 /boot
 # sync package and source 
 emerge-webrsync
 
-emerge --sync
+# もし必要なら。メモリ足りてないなら使わんほうがいい。
+emerge --sync　--quiet
 
 # stage3 などに対して適切なprofileか確認。
 eselect profile list
