@@ -5,7 +5,7 @@
 source /etc/profile
 export PS1="(chroot) ${PS1}"
 
-mount /dev/sda2 /boot
+mount /dev/sda1 /boot
 
 # sync package and source 
 emerge-webrsync
@@ -18,6 +18,12 @@ emerge-webrsync
 
 # stage3 などに対して適切なprofileか確認。
 eselect profile list
+
+
+# if UEIF use set
+
+echo '# set grub ueif setting' >> /etc/portage/make.conf
+echo 'GRUB_PLATFORMS="efi-64"' >> /etc/portage/make.conf
 
 # update all package
 emerge --update --deep --newuse @world
@@ -47,6 +53,9 @@ env-update && source /etc/profile && export PS1="(chroot) ${PS1}"
 # graphic cardなどあるかないかわからないデバイスなどは
 # kernelをインストールするまえに入れておいたほうが良い。
 # install firmware
+# 再配布可能であるもののUSEFlagを建てる
+echo "sys-kernel/linux-firmware @BINARY-REDISTRIBUTABLE" >> /etc/portage/package.license
+
 emerge sys-kernel/linux-firmware
 
 # メモリーが足りない場合はこれと
@@ -58,10 +67,19 @@ emerge sys-kernel/linux-firmware
 # install kernel
 emerge sys-kernel/gentoo-sources
 
-# ここは任意
-emerge sys-kernel/genkernel
-genkernel all
+# kernel 一覧を表示
+eselect kernel list
 
+# 使うlinuxカーネルを設定する
+eselect kernel set 1
+
+# manual setting
+
+# manu configなど
+# auto
+emerge sys-kernel/genkernel
+
+# /etc/fstab require for genkernl build
 # setting for bios
 cat << END >> /etc/fstab
 /dev/sda1   /boot        ext2    defaults             0 2
@@ -76,16 +94,14 @@ cat << END >> /etc/fstab
 /dev/sda3   /            ext4    noatime              0 1
 END
 
+genkernel all
+
+
 
 # network setting
 # dhcp client
-# しなくてもいい設定のはず。
-# メモリ少なかったら後回しにする。
-# 手動で設定できるはず。
-# emerge net-misc/dhcpcd
+emerge net-misc/dhcpcd
 
-# timedatectl Asia/Tokyo
-# hostnamectl hostname maciar-gentoo
 systemctl enable dhcpcd
 
 # rootのパスワード設定
@@ -96,20 +112,21 @@ passwd
 
 # setting hostname etc
 systemd-firstboot --prompt --setup-machine-id
+# hostnameの設定など
+# 日本は321
+# 102 jp keyboard
+
 
 # install wireless tool
 emerge net-wireless/iw 
 emerge net-wireless/wpa_supplicant
 
-# system keymaps
-
 ## install grub
-emerge --ask --verbose sys-boot/grub:2
+emerge sys-boot/grub:2
 
 # ueifで
 # if もし、GRUB_PLATFORMS="efi-64"とならなかった場合、
 # 下記の設定をして、もう一度
-# echo 'GRUB_PLATFORMS="efi-64"' >> /etc/portage/make.conf
 # emerge --ask --update --newuse --verbose sys-boot/grub:2
 # とする必要がある。
 
@@ -119,6 +136,7 @@ emerge --ask --verbose sys-boot/grub:2
 # bios
 grub-install /dev/sda
 
+# before ccheck up
 # ueif
 grub-install --target=x86_64-efi --efi-directory=/boot
 

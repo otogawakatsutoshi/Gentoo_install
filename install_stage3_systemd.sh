@@ -32,12 +32,14 @@ parted -s -a optimal /dev/sda             -- unit mib mkpart ESP     fat32      
 parted -s -a optimal /dev/sda             -- unit mib mkpart primary linux-swap 258 770 name 2 linux-swap set swap on
 parted -s -a optimal /dev/sda             -- unit mib mkpart primary ext4       770  -1 name 3 rootfs
 
+boot_memory=256
+swap_memory=2048
 # 256mib /boot
-parted -s -a optimal /dev/sda             -- unit mib mkpart "'EFI system partition'" 1   257 
+parted -s -a optimal /dev/sda             -- unit mib mkpart "'EFI system partition'" 1   $(( 1 + $boot_memory )) 
 # 2048mib swap
-parted -s -a optimal /dev/sda             -- unit mib mkpart linux-swap               257 2305
+parted -s -a optimal /dev/sda             -- unit mib mkpart linux-swap               $(( 1 + $boot_memory )) $(( 1 + $boot_memory + $swap_memory ))
 # -1mib
-parted -s -a optimal /dev/sda             -- unit mib mkpart rootfs                   2305  -1
+parted -s -a optimal /dev/sda             -- unit mib mkpart rootfs                   $(( 1 + $boot_memory + $swap_memory ))  -1
 
 parted -s -a optimal /dev/sda set 1 esp on
 parted -s -a optimal /dev/sda set 2 swap on
@@ -102,12 +104,17 @@ tar xpvf stage3-*.tar.xz --xattrs-include='*.*' --numeric-owner
 
 # systemd-amd64だけだと/は1.2GBで済む。がやはり、webrsyncでスペースが足りなくなる。
 # mount -o remount,size=3G,noatime /
-# mount -t ext4 /dev/sdc3 -o remount,size=3G,noatime /
+
+# systemd-amd64-desktopだとtmpfsに8Gあってもgenkernel all
+# とカーネルを自動でコンパイルした時点で8Gでも足りなくなる。
+# 
 
 rm -rf *.tar.xz
 
 # add mirror
 # echo GENTOO_MIRRORS=\"https://ftp.jaist.ac.jp/pub/Linux/Gentoo/ rsync://ftp.jaist.ac.jp/pub/Linux/Gentoo/ https://ftp.riken.jp/Linux/gentoo/ rsync://ftp.riken.jp/gentoo/\" >> /mnt/gentoo/etc/portage/make.conf
+
+mirrorselect -i -o >> /mnt/gentoo/etc/portage/make.conf
 
 # create ebuild repository
 mkdir --parents /mnt/gentoo/etc/portage/repos.conf
