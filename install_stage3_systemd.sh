@@ -114,12 +114,12 @@ rm -rf *.tar.xz
 # add mirror
 # echo GENTOO_MIRRORS=\"https://ftp.jaist.ac.jp/pub/Linux/Gentoo/ rsync://ftp.jaist.ac.jp/pub/Linux/Gentoo/ https://ftp.riken.jp/Linux/gentoo/ rsync://ftp.riken.jp/gentoo/\" >> /mnt/gentoo/etc/portage/make.conf
 
-mirrorselect -i -o >> /mnt/gentoo/etc/portage/make.conf
-
 # create ebuild repository
 mkdir --parents /mnt/gentoo/etc/portage/repos.conf
 
 cp /mnt/gentoo/usr/share/portage/config/repos.conf /mnt/gentoo/etc/portage/repos.conf/gentoo.conf
+
+mirrorselect -i -o >> /mnt/gentoo/etc/portage/make.conf
 
 # DNS 情報
 cp --dereference /etc/resolv.conf /mnt/gentoo/etc/
