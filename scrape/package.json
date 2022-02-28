@@ -9,11 +9,15 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "commander": "^9.0.0",
+    "node-fetch": "^3.2.0",
     "puppeteer": "^13.4.0",
-    "commander": "^9.0.0"
+    "winston": "^3.6.0"
   },
   "devDependencies": {
     "@types/node": "^17.0.21",
+    "@types/puppeteer": "^5.4.5",
+    "@types/winston": "^2.4.4",
     "eslint": "^8.10.0"
   }
 }
