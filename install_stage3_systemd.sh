@@ -2,6 +2,9 @@
 
 # [install cookbook](https://wiki.gentoo.org/wiki/Handbook:AMD64)
 
+# パーティションを分けるのは脆弱だったファイルシステムの名残なので
+# 今は最低限しかパーティションを分けないのが主流
+
 # Model: BUFFALO USB Flash Disk (scsi)
 # Disk /dev/sdd: 8097MB
 # Sector size (logical/physical): 512B/512B
@@ -41,6 +44,9 @@ parted -s -a optimal /dev/sda             -- unit mib mkpart linux-swap         
 # -1mib
 parted -s -a optimal /dev/sda             -- unit mib mkpart rootfs                   $(( 1 + $boot_memory + $swap_memory ))  -1
 
+# gentooは/varと/usrを他のOSよりも大きく確保すべき。
+# /var/db/repos/gentoo だけで650Mibは使う。/var/cache/distfiles と /var/cache/binpkgs いれたらもっと大きい。
+# 
 parted -s -a optimal /dev/sda set 1 esp on
 parted -s -a optimal /dev/sda set 2 swap on
 
@@ -61,6 +67,11 @@ mkfs.ext4 /dev/sda3
 
 # print partition list
 parted -s -a optimal /dev/sda p
+
+# mount root filesisytem. 
+# これをしないと一次ファイルをメモリに書き込んでいるので処理がやばい
+mount /dev/sda3 /mnt/gentoo
+
 
 # nicを確認
 ip link show
@@ -132,3 +143,6 @@ mount --rbind /dev /mnt/gentoo/dev
 mount --make-rslave /mnt/gentoo/dev
 mount --bind /run /mnt/gentoo/run
 mount --make-slave /mnt/gentoo/run
+
+# --bindはchroot時によく使う。chrootするとその環境から外のシンボリックリンクを辿ることはできないが、
+# --bindだと外のシンボリックリンクを見に行くことができる。
