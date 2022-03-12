@@ -27,6 +27,28 @@ eselect profile list
 echo '# set grub ueif setting' >> /etc/portage/make.conf
 echo 'GRUB_PLATFORMS="efi-64"' >> /etc/portage/make.conf
 
+# profileで使いたいUSEフラグを追加する。
+# 例えば、gnome,KDE(plasma)はデフォルトでnetworkmanagerを使うようになっているわけでないので
+# 追加する。wifi使うなら必須。
+
+# sddmはxserverを内部で使っているログインマネージャ
+# desktop の場合、ログインマネージャーが必要なのでインストール
+# wikiではplasmaインストール時に自動でインストールされると書かれているが
+# profile選択してもインストールされない。
+echo '# set for plasma or gnome desktop' >> /etc/portage/make.conf
+echo 'USE="${USE} networkmanager sddm"' >> /etc/portage/make.conf
+
+# ログインマネージャを有効にしておく
+systemctl enable sddm
+
+# デスクトップのためのbatteryなどの管理
+# ほぼ必須
+emerge kde-plasma/powerdevil
+
+# システム設定。
+# ほぼ必須
+emerge kde-plasma/systemsettings
+
 # update all package
 emerge --update --deep --newuse @world
 emerge app-editors/vim
@@ -99,11 +121,6 @@ END
 
 genkernel all
 
-# network setting
-# dhcp client
-emerge net-misc/dhcpcd
-
-systemctl enable dhcpcd
 
 # rootのパスワード設定
 passwd
@@ -135,9 +152,25 @@ systemd-firstboot --prompt --setup-machine-id
 # 日本は321
 # 102 jp keyboard
 
+# network setting
+
+# dhcp client
+emerge net-misc/dhcpcd
+
+systemctl enable dhcpcd
 # install wireless tool
+
+# wep tool
 emerge net-wireless/iw 
+# wpa tool
 emerge net-wireless/wpa_supplicant
+
+# nmcliの設定
+systemctl enable NetworkManager
+systemctl start NetworkManager
+
+# connect wifi
+nmcli dev wifi connect $SSID password $PASSOWRD
 
 ## install grub
 emerge sys-boot/grub:2

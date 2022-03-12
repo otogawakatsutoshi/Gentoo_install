@@ -72,6 +72,14 @@ parted -s -a optimal /dev/sda p
 # これをしないと一次ファイルをメモリに書き込んでいるので処理がやばい
 mount /dev/sda3 /mnt/gentoo
 
+# nicが起動できない場合は
+# ソフトウェア、ハードウェアのロックがかかっていないか確認する。
+# moduleがロードされても動かない理由の一つ。
+# ハードウェア、ソフトウェアのロックがかかっていないか確認できる。
+rfkill list
+
+# nicのリスト表示
+iw  dev
 
 # nicを確認
 ip link show
@@ -79,10 +87,16 @@ ip link show
 # 下のように使うnicを起動させる。
 ip link set wlp2s0b1 up
 
+# アクセスポイントを検索
+# 下のネットワークの設定の時にSSIDが必要になるので確認。
+iw link wlp2s0b1 scan
+
+# インストール時のwifiネットワークの設定
+net-setup
+
 # net-setupは設定が間違っていても普通にコマンドは通るので
 # ping -c 3 8.8.8.8
 # で送って確認。
-net-setup
 
 # install stage3 
 
