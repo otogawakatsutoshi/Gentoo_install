@@ -5,6 +5,7 @@
 source /etc/profile
 export PS1="(chroot) ${PS1}"
 
+# これはchrootの外からでもできる。mount /dev/sda1 /mnt/gentoo/boot　になるが。
 mount /dev/sda1 /boot
 
 # sync package and source 
@@ -19,9 +20,10 @@ emerge-webrsync
 # stage3 などに対して適切なprofileか確認。
 eselect profile list
 
+# desktop-systemdが嫌なら、gnome,prasmaに変更すること。
+# eselect profile set number という形式で選択
 
 # if UEIF use set
-
 echo '# set grub ueif setting' >> /etc/portage/make.conf
 echo 'GRUB_PLATFORMS="efi-64"' >> /etc/portage/make.conf
 
@@ -37,7 +39,7 @@ echo "export EDITOR=$(command -v vim)" >> /root/.bashrc
 # emerge --config sys-libs/timezone-data
 
 # set locale
-echo en_US ISO-8859-1 >> /etc/locale.gen
+# echo en_US ISO-8859-1 >> /etc/locale.gen
 echo en_US.UTF-8 UTF-8 >> /etc/locale.gen
 # echo ja_JP.EUC-JP EUC-JP >> /etc/locale.gen
 echo ja_JP.UTF-8 UTF-8 >> /etc/locale.gen
@@ -57,10 +59,6 @@ env-update && source /etc/profile && export PS1="(chroot) ${PS1}"
 echo "sys-kernel/linux-firmware @BINARY-REDISTRIBUTABLE" >> /etc/portage/package.license
 
 emerge sys-kernel/linux-firmware
-
-# メモリーが足りない場合はこれと
-# 無線wifiのビルドをやめて、後でインストールしても良い。
-# 
 
 # これがないとwifi,仮想環境などカーネル
 # に依存した機能のビルドで失敗する
@@ -94,9 +92,12 @@ cat << END >> /etc/fstab
 /dev/sda3   /            ext4    noatime              0 1
 END
 
+# 外付けにインストールして再起動した場合、
+# 正しく動かないなら、
+# /etc/fstab を見て/dev/sdaなどの位置が正しいか確認すること。
+
+
 genkernel all
-
-
 
 # network setting
 # dhcp client
@@ -107,6 +108,24 @@ systemctl enable dhcpcd
 # rootのパスワード設定
 passwd
 
+# sudo コマンドのインストール
+# 開発ユーザー用、運用時はdoas使う。
+emerge app-admin/sudo
+
+# 運用ユーザー用、一部の機能だけroot権限必要ならという感じ。
+emerge app-admin/doas
+
+# 作業用一般ユーザーの作成
+USER=yourname
+
+# sudoできるユーザーの作成
+useradd -m $USER
+passwd $USER
+usermod -aG wheel $USER
+
+# デスクトップ環境ならグラフィカルモードになっていることを確認。
+systemctl get-default
+
 # キーボードの設定
 # /etc/conf.d/keymaps
 
@@ -115,7 +134,6 @@ systemd-firstboot --prompt --setup-machine-id
 # hostnameの設定など
 # 日本は321
 # 102 jp keyboard
-
 
 # install wireless tool
 emerge net-wireless/iw 
@@ -130,16 +148,18 @@ emerge sys-boot/grub:2
 # emerge --ask --update --newuse --verbose sys-boot/grub:2
 # とする必要がある。
 
-# 順番考えた上でイニシャルかどうかも書いとく。
-
 # bootにgrubのインストール
 # bios
 grub-install /dev/sda
 
 # before ccheck up
 # ueif
-grub-install --target=x86_64-efi --efi-directory=/boot
+# --remobableはいるマザーボードかどうかは場合によりけり。
+# とりあえずやってみる精神。
+# macは--removableがいった。
+grub-install --target=x86_64-efi --efi-directory=/boot --removable
 
+# 設定ファイルを出力。上書きも同じ。
 grub-mkconfig -o /boot/grub/grub.cfg
 
 # chrootをやめる。
@@ -147,3 +167,6 @@ exit
 # cd /
 # umount -l /mnt/gentoo/dev{/shm,/pts,}
 # umount -R /mnt/gentoo
+
+# reboot
+# reboot五に抜く。
