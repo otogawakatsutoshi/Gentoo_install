@@ -70,6 +70,20 @@ gdisk /dev/$disk
 # Last sector: +128M ↵
 # Hex Code: EF00 ↵
 
+# Command: n ↵
+# Partition Number: 2 ↵
+# First sector: ↵
+# Last sector: +4G ↵
+# Hex Code: 8200 ↵
+
+# Command: n ↵
+# Partition Number: 3 ↵
+# First sector: ↵
+# Last sector: ↵ (for rest of disk)
+# Hex Code: ↵
+
+# Command: w ↵
+# Do you want to proceed? (Y/N): Y ↵
 
 # uefi
 mkfs.vfat -F 32 /dev/${disk}1
