@@ -6,7 +6,7 @@ source /etc/profile
 export PS1="(chroot) ${PS1}"
 
 # これはchrootの外からでもできる。mount /dev/sda1 /mnt/gentoo/boot　になるが。
-mount /dev/sda1 /boot
+mount /dev/${disk}1 /boot
 
 # sync package and source 
 emerge-webrsync
@@ -18,7 +18,9 @@ emerge-webrsync
 # emerge --sync --quiet
 
 # stage3 などに対して適切なprofileか確認。
+# ここでplasmaやgnomeなどの選択をする。
 eselect profile list
+eselect profile set 
 
 # desktop-systemdが嫌なら、gnome,prasmaに変更すること。
 # eselect profile set number という形式で選択
@@ -31,14 +33,17 @@ echo 'GRUB_PLATFORMS="efi-64"' >> /etc/portage/make.conf
 # 例えば、gnome,KDE(plasma)はデフォルトでnetworkmanagerを使うようになっているわけでないので
 # 追加する。wifi使うなら必須。
 
+# kde(plasma)の場合
+
 # sddmはxserverを内部で使っているログインマネージャ
 # desktop の場合、ログインマネージャーが必要なのでインストール
 # wikiではplasmaインストール時に自動でインストールされると書かれているが
 # profile選択してもインストールされない。
-echo '# set for plasma or gnome desktop' >> /etc/portage/make.conf
+echo '# set for plasma desktop' >> /etc/portage/make.conf
 echo 'USE="${USE} networkmanager sddm"' >> /etc/portage/make.conf
 
 # ログインマネージャを有効にしておく
+# kdeの場合。
 systemctl enable sddm
 
 # デスクトップのためのbatteryなどの管理
@@ -49,12 +54,28 @@ emerge kde-plasma/powerdevil
 # ほぼ必須
 emerge kde-plasma/systemsettings
 
+# gnomeの場合
+echo '# set for gnome desktop' >> /etc/portage/make.conf
+echo 'USE="${USE} networkmanager"' >> /etc/portage/make.conf
+
 # update all package
 emerge --update --deep --newuse @world
 emerge app-editors/vim
 
 echo "# set default editor for root." >> /root/.bashrc
 echo "export EDITOR=$(command -v vim)" >> /root/.bashrc
+
+# 間違ったprofileを選択して、ビルドしてしまった場合は下のようにして
+# 消す。
+# # depcleanの対象にする。
+# emerge --deselect 
+# # emerge --depclean
+# emerge --update --deep --newuse @world
+# emerge --depclean
+
+# # profile を変更しても削除できない場合は下のようにuseフラグを指定して
+# # 削除する。
+# emerge -C $(qlist -CI kde)
 
 # set timezone 
 # echo "Asia/Tokyo" > /etc/timezone
@@ -186,11 +207,19 @@ emerge sys-boot/grub:2
 grub-install /dev/sda
 
 # before ccheck up
-# ueif
-# --remobableはいるマザーボードかどうかは場合によりけり。
+# /efi/bootしか無理なマザーボードもあるが、それの
+# 判断の自動化のために--remobableをつける。
 # とりあえずやってみる精神。
 # macは--removableがいった。
 grub-install --target=x86_64-efi --efi-directory=/boot --removable
+
+if [ ! -d /boot/grub.d ]; then
+  mkdir /boot/grub.d
+fi
+
+cat << ./40_custom >> /boot/grub.d/40_custom
+
+# systemd.unit=emergency.target
 
 # 設定ファイルを出力。上書きも同じ。
 grub-mkconfig -o /boot/grub/grub.cfg
