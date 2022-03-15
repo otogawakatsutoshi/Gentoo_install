@@ -217,7 +217,7 @@ if [ ! -d /boot/grub.d ]; then
   mkdir /boot/grub.d
 fi
 
-cat << ./40_custom >> /boot/grub.d/40_custom
+cat << ./40_custom | sed '3d' >> /etc/grub.d/40_custom
 
 # systemd.unit=emergency.target
 
