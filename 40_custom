@@ -1,0 +1,34 @@
+#!/bin/bash
+# 
+# this file is custom entry. this entry added at default entry.
+
+menuentry "System shutdown" {
+  echo "System shutting down..."
+  halt
+}
+
+menuentry "System reboot" {
+  echo "System rebooting..."
+  reboot
+}
+
+menuentry "System Set graphical" {
+  echo "System set graphical"
+  systemctl set-default graphical.target
+  echo "System rebooting..."
+  reboot
+}
+
+menuentry "System Set multi-user" {
+  echo "System set multi-user"
+  systemctl set-default multi-user.target
+  # disable window manager
+  # systemctl disable 
+  echo "System rebooting..."
+  reboot
+}
+
+# uefi only.
+menuentry "Firmware Setup" {
+  fwsetup
+}

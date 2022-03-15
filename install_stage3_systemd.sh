@@ -1,6 +1,9 @@
 #!/bin/bash
-
+# 
 # [install cookbook](https://wiki.gentoo.org/wiki/Handbook:AMD64)
+
+#  example
+disk=sda
 
 # パーティションを分けるのは脆弱だったファイルシステムの名残なので
 # 今は最低限しかパーティションを分けないのが主流
@@ -18,59 +21,77 @@
 # 512byte=1sector
 # 1mib=1024byte
 
+# partedでやるやり方
 # create partition for BIOS
-parted -s -a optimal /dev/sda mklabel msdos -- unit mib mkpart primary 1     3 name 1 grub set 1 bios_grub on
-parted -s -a optimal /dev/sda             -- unit mib mkpart primary 3   259 name 2 boot set 2 boot on
-parted -s -a optimal /dev/sda             -- unit mib mkpart primary 259 771 name 3 swap set 3 swap on
-parted -s -a optimal /dev/sda             -- unit mib mkpart primary 771  -1 name 4 rootfs
+parted -s -a optimal /dev/$disk mklabel msdos -- unit mib mkpart primary 1     3 name 1 grub set 1 bios_grub on
+parted -s -a optimal /dev/$disk             -- unit mib mkpart primary 3   259 name 2 boot set 2 boot on
+parted -s -a optimal /dev/$disk             -- unit mib mkpart primary 259 771 name 3 swap set 3 swap on
+parted -s -a optimal /dev/$disk             -- unit mib mkpart primary 771  -1 name 4 rootfs
 
 # create partition for UEFI
-parted -s -a optimal /dev/sda mklabel gpt -- unit mib mkpart primary            1     3 name 1 grub set 1 bios_grub on
-parted -s -a optimal /dev/sda             -- unit mib mkpart ESP     fat32      3   259 name 2 "EFI System Partition" set 2 esp on
-parted -s -a optimal /dev/sda             -- unit mib mkpart primary linux-swap 259 771 name 3 linux-swap set 3 swap on
-parted -s -a optimal /dev/sda             -- unit mib mkpart primary ext4       771  -1 name 4 rootfs
+parted -s -a optimal /dev/$disk mklabel gpt -- unit mib mkpart primary            1     3 name 1 grub set 1 bios_grub on
+parted -s -a optimal /dev/$disk             -- unit mib mkpart ESP     fat32      3   259 name 2 "EFI System Partition" set 2 esp on
+parted -s -a optimal /dev/$disk             -- unit mib mkpart primary linux-swap 259 771 name 3 linux-swap set 3 swap on
+parted -s -a optimal /dev/$disk             -- unit mib mkpart primary ext4       771  -1 name 4 rootfs
 
-parted -s -a optimal /dev/sda mklabel gpt
-parted -s -a optimal /dev/sda             -- unit mib mkpart ESP     fat32      2   258 name 1 "EFI System Partition" set esp on
-parted -s -a optimal /dev/sda             -- unit mib mkpart primary linux-swap 258 770 name 2 linux-swap set swap on
-parted -s -a optimal /dev/sda             -- unit mib mkpart primary ext4       770  -1 name 3 rootfs
+parted -s -a optimal /dev/$disk mklabel gpt
+parted -s -a optimal /dev/$disk             -- unit mib mkpart ESP     fat32      2   258 name 1 "EFI System Partition" set esp on
+parted -s -a optimal /dev/$disk             -- unit mib mkpart primary linux-swap 258 770 name 2 linux-swap set swap on
+parted -s -a optimal /dev/$disk             -- unit mib mkpart primary ext4       770  -1 name 3 rootfs
 
 boot_memory=256
 swap_memory=2048
 # 256mib /boot
-parted -s -a optimal /dev/sda             -- unit mib mkpart "'EFI system partition'" 1   $(( 1 + $boot_memory )) 
+parted -s -a optimal /dev/$disk             -- unit mib mkpart "'EFI system partition'" 1   $(( 1 + $boot_memory )) 
 # 2048mib swap
-parted -s -a optimal /dev/sda             -- unit mib mkpart linux-swap               $(( 1 + $boot_memory )) $(( 1 + $boot_memory + $swap_memory ))
+parted -s -a optimal /dev/$disk             -- unit mib mkpart linux-swap               $(( 1 + $boot_memory )) $(( 1 + $boot_memory + $swap_memory ))
 # -1mib
-parted -s -a optimal /dev/sda             -- unit mib mkpart rootfs                   $(( 1 + $boot_memory + $swap_memory ))  -1
+parted -s -a optimal /dev/$disk             -- unit mib mkpart rootfs                   $(( 1 + $boot_memory + $swap_memory ))  -1
 
 # gentooは/varと/usrを他のOSよりも大きく確保すべき。
 # /var/db/repos/gentoo だけで650Mibは使う。/var/cache/distfiles と /var/cache/binpkgs いれたらもっと大きい。
 # 
-parted -s -a optimal /dev/sda set 1 esp on
-parted -s -a optimal /dev/sda set 2 swap on
+parted -s -a optimal /dev/$disk set 1 esp on
+parted -s -a optimal /dev/$disk set 2 swap on
+
+# gdiskでやるやり方。こちらの方がわかりやすいので推奨
+# ディスク内容全消去
+sgdisk --zap-all /dev/$disk
+
+gdisk /dev/$disk
+
+# Command: o ↵
+# This option deletes all partitions and creates a new protective MBR.
+# Proceed? (Y/N): y ↵
+
+# Command: n ↵
+# Partition Number: 1 ↵
+# First sector: ↵
+# Last sector: +128M ↵
+# Hex Code: EF00 ↵
+
 
 # uefi
-mkfs.vfat -F 32 /dev/sda1
+mkfs.vfat -F 32 /dev/${disk}1
 
 # bios
-# mkfs.ext3 /dev/sda1
+# mkfs.ext3 /dev/${disk}1
 
-mkswap    /dev/sda2
-swapon    /dev/sda2
-mkfs.ext4 /dev/sda3
+mkswap    /dev/${disk}2
+swapon    /dev/${disk}2
+mkfs.ext4 /dev/${disk}3
 
 # create file system
-# mkfs.ext2 /dev/sda2
-# mkswap    /dev/sda3
-# mkfs.ext4 /dev/sda4
+# mkfs.ext2 /dev/${disk}2
+# mkswap    /dev/${disk}3
+# mkfs.ext4 /dev/${disk}4
 
 # print partition list
-parted -s -a optimal /dev/sda p
+parted -s -a optimal /dev/$disk p
 
 # mount root filesisytem. 
 # これをしないと一次ファイルをメモリに書き込んでいるので処理がやばい
-mount /dev/sda3 /mnt/gentoo
+mount /dev/${disk}3 /mnt/gentoo
 
 # nicが起動できない場合は
 # ソフトウェア、ハードウェアのロックがかかっていないか確認する。
