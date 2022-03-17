@@ -241,6 +241,16 @@ emerge --ask media-fonts/kochi-substitute media-fonts/ja-ipafonts
 ## install grub
 emerge sys-boot/grub:2
 
+# accept_keywordでtesting ブランチも使える。
+# 開発ツール
+echo '# github-cli exists testing branch only' >> /etc/portage/package.accept_keywords/github-cli
+echo '# if official merge request and aprove this package,remove these row.' >> /etc/portage/package.accept_keywords/github-cli
+echo 'dev-util/github-cli' >> /etc/portage/package.accept_keywords/github-cli
+
+echo '# vscode exists testing branch only' >> /etc/portage/package.accept_keywords/vscode
+echo '# if official merge request and aprove this package,remove these row.' >> /etc/portage/package.accept_keywords/vscode
+echo 'app-editors/vscode' >> /etc/portage/package.accept_keywords/vscode
+
 # ueifで
 # if もし、GRUB_PLATFORMS="efi-64"とならなかった場合、
 # 下記の設定をして、もう一度
