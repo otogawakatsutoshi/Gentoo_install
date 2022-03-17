@@ -58,6 +58,8 @@ emerge kde-plasma/systemsettings
 echo '# set for gnome desktop' >> /etc/portage/make.conf
 echo 'USE="${USE} networkmanager"' >> /etc/portage/make.conf
 
+emerge gnome-base/gnome
+
 # update all package
 emerge --update --deep --newuse @world
 emerge app-editors/vim
@@ -156,10 +158,15 @@ emerge app-admin/doas
 # 作業用一般ユーザーの作成
 USER=yourname
 
-# sudoできるユーザーの作成
+# su でrootユーザーに変更できる権限を付与
 useradd -m $USER
 passwd $USER
+# 管理者グループに追加
 usermod -aG wheel $USER
+
+# gnomeデスクトップを使っているなら、plugdevグループに追加する
+getent group plugdev
+usermod -aG plugdev $USER
 
 # デスクトップ環境ならグラフィカルモードになっていることを確認。
 systemctl get-default
@@ -172,6 +179,7 @@ systemd-firstboot --prompt --setup-machine-id
 # hostnameの設定など
 # 日本は321
 # 102 jp keyboard
+# キーボドの設定はUSでも設定しないと動かないのでinputめそっでで注意
 
 # network setting
 
@@ -190,8 +198,45 @@ emerge net-wireless/wpa_supplicant
 systemctl enable NetworkManager
 systemctl start NetworkManager
 
+# gnome desktopの場合
+systemctl enable gdm
+
+## gnomeの場合、特に.xsessionなどは設定しなくて良い。
+
+
+# 時刻がずれたとときに合わせるよう。
+emerge --ask net-misc/ntp
+# 起動時に常に合わせに行くなら下のように登録しておく。
+# ほぼ必須
+# systemctl enable --now ntpd
+
+
 # connect wifi
-nmcli dev wifi connect $SSID password $PASSOWRD
+# nmcli dev wifi connect $SSID password $PASSOWRD
+
+# guiのクライアントのインストール（必要ならば）
+
+# accepting google-chrome license for all package
+echo "*/* google-chrome" >> /etc/portage/package.license
+emerge www-clinet/google-chrome
+
+# 日本語のインプットメソッド
+# mozcの場合。
+echo '# set for input method mozc' >> /etc/portage/make.conf
+echo 'USE="${USE} fctix4 -ibus"' >> /etc/portage/make.conf
+emerge app-i18n/fcitx app-i18n/fcitx-configtool app-i18n/mozc
+
+# ibusの場合
+# gnomeとの組み合わせはfcitxよりもibusのほうがよい。ibus-mozcパッケージは廃止されるが、
+# 組み合わせ自体は残る。
+echo '# set for input method ibus' >> /etc/portage/make.conf
+echo 'USE="${USE} -fctix4 ibus"' >> /etc/portage/make.conf
+emerge app-i18n/mozc
+# gnomeのキーボードの設定からmozcを追加
+
+# 日本語フォントインストール
+echo "*/* free-noncomm" >> /etc/portage/package.license
+emerge --ask media-fonts/kochi-substitute media-fonts/ja-ipafonts
 
 ## install grub
 emerge sys-boot/grub:2
@@ -204,7 +249,7 @@ emerge sys-boot/grub:2
 
 # bootにgrubのインストール
 # bios
-grub-install /dev/sda
+grub-install /dev/${disk}
 
 # before ccheck up
 # /efi/bootしか無理なマザーボードもあるが、それの
@@ -217,7 +262,7 @@ if [ ! -d /boot/grub.d ]; then
   mkdir /boot/grub.d
 fi
 
-cat << ./40_custom | sed '3d' >> /etc/grub.d/40_custom
+cat < ./40_custom | sed '3d' >> /etc/grub.d/40_custom
 
 # systemd.unit=emergency.target
 
