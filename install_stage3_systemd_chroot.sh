@@ -250,7 +250,12 @@ echo 'dev-util/github-cli' >> /etc/portage/package.accept_keywords/github-cli
 echo '# vscode exists testing branch only' >> /etc/portage/package.accept_keywords/vscode
 echo '# if official merge request and aprove this package,remove these row.' >> /etc/portage/package.accept_keywords/vscode
 echo 'app-editors/vscode' >> /etc/portage/package.accept_keywords/vscode
+# license
+echo "*/* Microsoft-vscode" >> /etc/portage/package.license
 
+echo '# pwsh-bin exists testing branch only' >> /etc/portage/package.accept_keywords/pwsh-bin
+echo '# if official merge request and aprove this package,remove these row.' >> /etc/portage/package.accept_keywords/pwsh-bin
+echo 'app-shells/pwsh-bin' >> /etc/portage/package.accept_keywords/pwsh-bin
 # ueifで
 # if もし、GRUB_PLATFORMS="efi-64"とならなかった場合、
 # 下記の設定をして、もう一度
