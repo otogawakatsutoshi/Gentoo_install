@@ -145,6 +145,28 @@ END
 genkernel all
 
 
+# eseclect repository をインストールしておく。
+# laymanの代替として強力なため
+emerge app-eselect/eselect-repository
+
+# できるだけ影響範囲が小さくしておく。
+# community repositoryを有効にしておく。
+eselect repository enable guru
+
+echo '*/*::guru' >> /etc/portage/package.mask/guru
+
+# guru でunstableなので使う場合は、かなり気をつける。
+# echo 'app-backup/timeshift::guru' >> /etc/portage/package.unmask
+
+# echo '# timeshift exists testing branch only' >> /etc/portage/package.accept_keywords/timeshift
+# echo '# if official merge request and aprove this package,remove these row.' >> /etc/portage/package.accept_keywords/timeshift
+# echo 'app-backup/timeshift::guru' >> /etc/portage/package.accept_keywords/timeshift
+
+# # repository enableしたら emerge-webrsyncではだめ
+# emerge --sync
+
+# emerge -pv app-backup/timeshift::guru
+
 # rootのパスワード設定
 passwd
 
@@ -163,6 +185,9 @@ useradd -m $USER
 passwd $USER
 # 管理者グループに追加
 usermod -aG wheel $USER
+
+# gentooはsudoers groupがないのでwheel group に入っている人はsudoが使えるようにしておく
+visudo
 
 # gnomeデスクトップを使っているなら、plugdevグループに追加する
 getent group plugdev
