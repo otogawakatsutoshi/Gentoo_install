@@ -6,6 +6,7 @@ charset = utf-8
 # indent_size intentionally not specified in this section
 indent_style = space
 insert_final_newline = true
+end_of_line = lf
 
 # Source code
 [*.{py,go,cs,ps1,psd1,psm1}]
@@ -13,7 +14,11 @@ indent_size = 4
 
 # Shell scripts
 [*.{sh,js,mjs}]
-end_of_line = lf
+indent_size = 2
+
+# grub setting
+[grub/*]
+indent_style = tab
 indent_size = 2
 
 # Markdown
