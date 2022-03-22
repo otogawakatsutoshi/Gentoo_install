@@ -1,0 +1,43 @@
+#!/bin/bash
+# 
+# this file is custom entry. this entry added at default entry.
+
+submenu " custom menu" {
+
+	menuentry "System reboot" {
+		echo "System rebooting..."
+		reboot
+	}
+
+	menuentry "System Start multi-user" {
+		load_video
+		if [ "x$grub_platform" = xefi ]; then
+						set gfxpayload=keep
+		fi
+
+		insmod gzio
+		insmod part_gpt
+		insmod fat
+		set root='hd2,gpt1'
+		if [ x$feature_platform_search_hint = xy ]; then
+			search --no-floppy --fs-uuid --set=root --hint-bios=hd2,gpt1 --hint-efi=hd2,gpt1 --hint-baremetal=ahci2,gpt1	D29C-E475
+		else
+			search --no-floppy --fs-uuid --set=root D29C-E475
+		fi
+
+		# set /boot directory underimage 
+		# Founr linux image:  /boot/vmlinuz-5.15.26-gentoo-x86_64
+		# Found initrd image: /boot/initramfs-5.15.26-gentoo-x86_64.img
+		echo		'Loading Linux 5.15.26-gentoo-x86_64 ...'
+		# set multi user.
+		# blkid -o list で表示される/dev/sda1 のようにパーティションで区切ったブロックのuuid
+		linux		/vmlinuz-5.15.26-gentoo-x86_64 root=UUID=c3f6f7f9-1f0b-4470-94d4-9e8cb118fc61 ro systemd.unit=multi-user.target
+		echo		'Loading initial ramdisk ...'
+		initrd	/initramfs-5.15.26-gentoo-x86_64.img
+	}
+
+	# uefi only.
+	menuentry "Firmware Setup" {
+		fwsetup
+	}
+}
