@@ -3,7 +3,7 @@
 # chroot /mnt/gentoo /bin/bash
 
 source /etc/profile
-export PS1="(chroot) ${PS1}"
+export PS1="(chroot) gentoo ${PS1}"
 
 # これはchrootの外からでもできる。mount /dev/sda1 /mnt/gentoo/boot　になるが。
 mount /dev/${disk}1 /boot
@@ -95,7 +95,7 @@ locale-gen
 eselect locale list | grep en_US.utf8 | 
 eselect locale set 
 
-env-update && source /etc/profile && export PS1="(chroot) ${PS1}"
+env-update && source /etc/profile && export PS1="(chroot) gentoo ${PS1}"
 
 # graphic cardなどあるかないかわからないデバイスなどは
 # kernelをインストールするまえに入れておいたほうが良い。
