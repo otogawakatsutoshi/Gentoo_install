@@ -6,6 +6,13 @@
 # dnfはrhel系以外ならarch系にcommunityでインストールできる。
 # 
 
+# cat << END >> /etc/yum.repos.d/centos.repo
+# [base]
+# name=CentOS-stream $releasever - Base
+# baseurl=http://ftp.riken.jp/pub/Linux/centos/$releasever-stream/BaseOS/$basearch/os
+# gpgkey=http://ftp.riken.jp/pub/Linux/centos/RPM-GPG-KEY-CentOS-Official
+# END
+
 mkdir /mnt/centos
 mount /dev/sdb4 /mnt/centos
 
