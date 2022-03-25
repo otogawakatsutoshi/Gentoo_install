@@ -7,7 +7,7 @@
 # 
 
 # cat << END >> /etc/yum.repos.d/centos.repo
-# [base]
+# [centos]
 # name=CentOS-stream $releasever - Base
 # baseurl=http://ftp.riken.jp/pub/Linux/centos/$releasever-stream/BaseOS/$basearch/os
 # gpgkey=http://ftp.riken.jp/pub/Linux/centos/RPM-GPG-KEY-CentOS-Official
@@ -21,7 +21,7 @@ repourl=https://ftp.jp.debian.org/debian
 
 ARCH=amd64
 version=8
-dnf --installroot=/mnt/centos -releasever=$version centos-stream-release systemd dnf 
+dnf --installroot=/mnt/centos --repo=centos --releasever=$version centos-stream-release systemd dnf 
 
 echo 'nameserver 8.8.8.8' >> /etc/resolv.conf
 
