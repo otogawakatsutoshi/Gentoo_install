@@ -5,6 +5,8 @@
 #  example
 disk=sda
 
+# permit :wheel chroot /dev/sdb3 /bash/bin
+
 # パーティションを分けるのは脆弱だったファイルシステムの名残なので
 # 今は最低限しかパーティションを分けないのが主流
 

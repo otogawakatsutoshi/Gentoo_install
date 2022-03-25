@@ -1,9 +1,9 @@
 #!bin/bash
 
-# chroot /mnt/debian /bin/bash
+# chroot /mnt/manjaro /bin/bash
 
 source /etc/profile
-export PS1="(chroot) debian ${PS1}"
+export PS1="(chroot) manjaro ${PS1}"
 
 [](https://wiki.archlinux.jp/index.php/GRUB)
 
@@ -15,7 +15,7 @@ mount /dev/${disk}1 /boot
 # firmware入れるならnon freeのbootstrap
 
 # non freeなパッケージが使えるように追加してやる。
-# debootstrapで使ったレポジトリは追加済みになっている。
+# pacman-mirros
 cat << END
 # non freeのcdと同じようにfirmwareが追加される。
 deb-src http://ftp.us.debian.org/debian bullseye main non-free contrib
@@ -26,13 +26,12 @@ END
 
 # http://cdimage.debian.org/cdimage/unofficial/non-free/firmware/bullseye/11.2.0/firmware.tar.gz
 # 
-apt update && apt upgrade -y
-
 # みんながよく使うツールインストール
 # shutdown,halt,lspciもないため、ほぼ必要。
-tasksel install standard
 
-apt install vim -y
+pacman -Sy base base-devel
+pacman -Sy less
+pacman -Sy vim
 
 echo "# set default editor for root." >> /root/.bashrc
 echo "export EDITOR=$(command -v vim)" >> /root/.bashrc
@@ -51,25 +50,21 @@ dpkg-reconfigure locales
 # apt install console-setup
 # dpkg-reconfigure keyboard-configuration 
 
-# debian形なので,dpkg-reconfigureでtimezonの変更
-dpkg-reconfigure tzdata
+pacman -Sy pciutils
 
-apt install -y network-manager
+systemd-firstboot --prompt
 
-apt install -y dhcpcd5
+systemctl enable NetworkManager
+
+pacman -Sy dhcpcd
 
 systemctl enable dhcpcd
 # install wireless tool
 
 # wep tool
-apt install -y iw
+pacman -Sy iw
 # wpa tool
-apt install -y wpasupplicant
-
-# wifiが使っているカーネルモジュールの特定
-lspci -vvnn | grep -A 9 Network | grep Kernel
-
-[debian形でドライバーの探し方](https://wiki.ubuntulinux.jp/UbuntuTips/Hardware/HowToSetupBcm43xx)
+pacman -Sy wpa_supplicant
 
 # メタパッケージをインストールするといい感じにwifiのモジュールを取ってきてくれる。
 apt install -y firmware-linux-nonfree
@@ -81,10 +76,10 @@ passwd
 
 # sudo コマンドのインストール
 # 開発ユーザー用、運用時はdoas使う。
-apt install -y sudo 
+pacman -Sy sudo
 
 # 運用ユーザー用、一部の機能だけroot権限必要ならという感じ。
-apt install -y doas 
+pacman -Sy doas
 
 # 作業用一般ユーザーの作成
 USER=yourname
@@ -96,6 +91,30 @@ passwd $USER
 # 管理者グループに追加
 usermod -aG wheel $USER
 
+[manjaro desktop](https://wiki.manjaro.org/index.php/Install_Desktop_Environments)
+
+# Install a basic KDE Plasma environment
+pacman -S plasma kio-extras
+# Optional: Install KDE applications
+# To install a full set of K* applications use kde-applications. This will be ~300 packages(including dependencies)
+
+pacman -S kde-applications
+# Optional: Install and use SDDM, the recommended display manager for KDE
+# SDDM is installed as a dependency of plasma. To enable it
+
+systemctl enable sddm.service --force
+systemctl reboot
+# Optional: Install the Manjaro configuration and theming for plasma
+pacman -S manjaro-kde-settings sddm-breath-theme manjaro-settings-manager-knotifier manjaro-settings-manager-kcm
+# Open plasma settings, go to Startup & Shutdown->Login Screen and select "Breath"
+
+# Alternatively, the newer themes may be installed with:
+
+# pacman -S breath2-icon-themes breath2-wallpaper plasma5-themes-breath2 sddm-breath2-theme
+# Create a new user for the new desktop environment
+useradd -mG lp,network,power,sys,wheel <username>
+passwd <username>
+
 # wheel グループがsudo使えるように
 # visudoで変更
 
@@ -104,8 +123,9 @@ usermod -aG wheel $USER
 DebianHostName=yourhostname
 echo $DebianHostName > /etc/hostname
 
-# 最新のkernelが自動ではいる。
-apt install linux-image-amd64
+# kernelとヘッダーをインストール
+pacman -S linux515 linux515-header
+
 
 # ホストと同じbootパーティしょんを使うならgrubはインストールしない
 # apt install grub-pc
@@ -119,5 +139,5 @@ apt install linux-image-amd64
 # キャッシュの解放
 apt clean
 
-# umount -l /mnt/gentoo/dev{/shm,/pts,}
-# umount -R /mnt/gentoo
+# umount -l /mnt/manjaro/dev{/shm,/pts,}
+# umount -R /mnt/manjaro
