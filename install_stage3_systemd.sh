@@ -66,6 +66,8 @@ gdisk /dev/$disk
 # This option deletes all partitions and creates a new protective MBR.
 # Proceed? (Y/N): y ↵
 
+# 複数のosのイメージを一つのbootに置くなら、
+# 5-6倍程度は見積もったほうが良い。1G程度あれば安心なはず。
 # Command: n ↵
 # Partition Number: 1 ↵
 # First sector: ↵
