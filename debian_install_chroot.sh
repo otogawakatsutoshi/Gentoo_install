@@ -5,24 +5,32 @@
 source /etc/profile
 export PS1="(chroot) debian ${PS1}"
 
+[](https://wiki.archlinux.jp/index.php/GRUB)
+
 # ホストも/bootを使っているなら、
 # --rbindもいるかもしれない
 mount /dev/${disk}1 /boot
 
-wget http://cdimage.debian.org/cdimage/unofficial/non-free/firmware/stable/11.2.0/firmware.tar.gz
+# 後からファームウェアを入れるのが難しいので、
+# firmware入れるならnon freeのbootstrap
 
 # non freeなパッケージが使えるように追加してやる。
 # debootstrapで使ったレポジトリは追加済みになっている。
 cat << END
+# non freeのcdと同じようにfirmwareが追加される。
 deb-src http://ftp.us.debian.org/debian bullseye main non-free contrib
 
-deb http://security.debian.org/ bullseye-security main
-deb-src http://security.debian.org/ bullseye-security main
+deb http://security.debian.org/ bullseye-security main non-free contrib
+deb-src http://security.debian.org/ bullseye-security main non-free contrib
 END
 
 # http://cdimage.debian.org/cdimage/unofficial/non-free/firmware/bullseye/11.2.0/firmware.tar.gz
 # 
 apt update && apt upgrade -y
+
+# みんながよく使うツールインストール
+# shutdown,halt,lspciもないため、ほぼ必要。
+tasksel install standard
 
 apt install vim -y
 
@@ -50,6 +58,16 @@ systemctl enable dhcpcd
 apt install -y iw
 # wpa tool
 apt install -y wpasupplicant
+
+# wifiが使っているカーネルモジュールの特定
+lspci -vvnn | grep -A 9 Network | grep Kernel
+
+[debian形でドライバーの探し方](https://wiki.ubuntulinux.jp/UbuntuTips/Hardware/HowToSetupBcm43xx)
+
+# メタパッケージをインストールするといい感じにwifiのモジュールを取ってきてくれる。
+apt install -y firmware-linux-nonfree
+# contributeのもインストールしておく。
+apt install -y firmware-linux
 
 # 管理者のパスワード設定
 passwd
@@ -90,8 +108,6 @@ apt install linux-image-amd64
 # ホストと同じものを使うならdebianのエントリーを追加するだけでよい。
 # [ grub menuの追加方法](https://wiki.archlinux.jp/index.php/GRUB)
 
-# shutdown もhaltもないため、必要。
-tasksel install standard
 
 # キャッシュの解放
 apt clean
