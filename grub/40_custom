@@ -56,6 +56,28 @@ submenu " custom menu" {
 		echo		'Loading initial ramdisk ...'
 		initrd	/initrd.img-5.10.0-10-amd64
 	}
+	menuentry "CentOS start" {
+		load_video
+		if [ "x$grub_platform" = xefi ]; then
+						set gfxpayload=keep
+		fi
+
+		insmod gzio
+		insmod part_gpt
+		insmod fat
+		set root='hd2,gpt1'
+		if [ x$feature_platform_search_hint = xy ]; then
+			search --no-floppy --fs-uuid --set=root --hint-bios=hd2,gpt1 --hint-efi=hd2,gpt1 --hint-baremetal=ahci2,gpt1	D29C-E475
+		else
+			search --no-floppy --fs-uuid --set=root D29C-E475
+		fi
+		echo		'Loading Linux 5.15-x86_64 ...'
+		
+		linux		/vmlinuz-5.15-x86_64 root=UUID=cbdcd79d-0574-4168-ba9f-04b84a5f9bdf ro 
+		echo		'Loading initial ramdisk ...'
+		initrd	/initramfs-5.15-x86_64.img
+	}
+
 	menuentry "Manjaro start" {
 		load_video
 		if [ "x$grub_platform" = xefi ]; then

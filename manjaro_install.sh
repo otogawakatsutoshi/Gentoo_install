@@ -14,7 +14,7 @@ repourl=http://ftp.riken.jp/Linux/manjaro
 arch-bootstrap -a $ARCH -r $repourl /mnt/manjaro
 # arch-bootstrap -a $ARCH  /mnt/manjaro
 
-
+echo 'nameserver 8.8.8.8' >> /mnt/manjaro/etc/resolv.conf
 
 # /etc/fstabはdebianは手動で作る方針なので、マルチブートならコピーして流用が簡単
 # マウントするデバイスは帰ること。
