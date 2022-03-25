@@ -1,6 +1,8 @@
-#!/bin/bash
-# 
-# this file is custom entry. this entry added at default entry.
+#!/bin/sh
+exec tail -n +3 $0
+# This file provides an easy way to add custom menu entries.  Simply type the
+# menu entries you want to add after this comment.  Be careful not to change
+# the 'exec tail' line above.
 
 submenu " custom menu" {
 
@@ -24,18 +26,57 @@ submenu " custom menu" {
 		else
 			search --no-floppy --fs-uuid --set=root D29C-E475
 		fi
-
-		# set /boot directory underimage 
-		# Founr linux image:  /boot/vmlinuz-5.15.26-gentoo-x86_64
-		# Found initrd image: /boot/initramfs-5.15.26-gentoo-x86_64.img
 		echo		'Loading Linux 5.15.26-gentoo-x86_64 ...'
 		# set multi user.
-		# blkid -o list で表示される/dev/sda1 のようにパーティションで区切ったブロックのuuid
 		linux		/vmlinuz-5.15.26-gentoo-x86_64 root=UUID=c3f6f7f9-1f0b-4470-94d4-9e8cb118fc61 ro systemd.unit=multi-user.target
 		echo		'Loading initial ramdisk ...'
 		initrd	/initramfs-5.15.26-gentoo-x86_64.img
 	}
 
+	menuentry "Debian start" {
+		load_video
+		if [ "x$grub_platform" = xefi ]; then
+						set gfxpayload=keep
+		fi
+
+		insmod gzio
+		insmod part_gpt
+		insmod fat
+		set root='hd2,gpt1'
+		if [ x$feature_platform_search_hint = xy ]; then
+			search --no-floppy --fs-uuid --set=root --hint-bios=hd2,gpt1 --hint-efi=hd2,gpt1 --hint-baremetal=ahci2,gpt1	D29C-E475
+		else
+			search --no-floppy --fs-uuid --set=root D29C-E475
+		fi
+		echo		'Loading Linux 5.10-10-amd64 ...'
+		# set multi user.
+		
+		# 他のosもインストールしているなら、別名という形でimageへのシンボリックリンクにしたほうが、わかりやすいかも。
+		linux		/vmlinuz-5.10.0-10-amd64 root=UUID=358b9ee3-5dfc-4628-a5e9-ff439f0764a5 ro 
+		echo		'Loading initial ramdisk ...'
+		initrd	/initrd.img-5.10.0-10-amd64
+	}
+	menuentry "Manjaro start" {
+		load_video
+		if [ "x$grub_platform" = xefi ]; then
+						set gfxpayload=keep
+		fi
+
+		insmod gzio
+		insmod part_gpt
+		insmod fat
+		set root='hd2,gpt1'
+		if [ x$feature_platform_search_hint = xy ]; then
+			search --no-floppy --fs-uuid --set=root --hint-bios=hd2,gpt1 --hint-efi=hd2,gpt1 --hint-baremetal=ahci2,gpt1	D29C-E475
+		else
+			search --no-floppy --fs-uuid --set=root D29C-E475
+		fi
+		echo		'Loading Linux 5.15-x86_64 ...'
+		
+		linux		/vmlinuz-5.15-x86_64 root=UUID=cbdcd79d-0574-4168-ba9f-04b84a5f9bdf ro 
+		echo		'Loading initial ramdisk ...'
+		initrd	/initramfs-5.15-x86_64.img
+	}
 	# uefi only.
 	menuentry "Firmware Setup" {
 		fwsetup
