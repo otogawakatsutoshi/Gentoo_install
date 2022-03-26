@@ -1,9 +1,9 @@
 #!bin/bash
 
-# chroot /mnt/debian /bin/bash
+# chroot /mnt/fedora /bin/bash
 
 source /etc/profile
-export PS1="(chroot) debian ${PS1}"
+export PS1="(chroot) fedora ${PS1}"
 
 [](https://wiki.archlinux.jp/index.php/GRUB)
 
@@ -14,19 +14,7 @@ mount /dev/${disk}1 /boot
 # 後からファームウェアを入れるのが難しいので、
 # firmware入れるならnon freeのbootstrap
 
-# non freeなパッケージが使えるように追加してやる。
-# debootstrapで使ったレポジトリは追加済みになっている。
-cat << END
-# non freeのcdと同じようにfirmwareが追加される。
-deb-src http://ftp.us.debian.org/debian bullseye main non-free contrib
-
-deb http://security.debian.org/ bullseye-security main non-free contrib
-deb-src http://security.debian.org/ bullseye-security main non-free contrib
-END
-
-# http://cdimage.debian.org/cdimage/unofficial/non-free/firmware/bullseye/11.2.0/firmware.tar.gz
-# 
-apt update && apt upgrade -y
+dnf update -y 
 
 # みんながよく使うツールインストール
 # shutdown,halt,lspciもないため、ほぼ必要。
