@@ -21,7 +21,7 @@ repourl=https://ftp.jp.debian.org/debian
 
 ARCH=amd64
 version=8
-dnf --installroot=/mnt/centos --repo=centos --releasever=$version centos-stream-release systemd dnf 
+dnf install --installroot=/mnt/centos --repo=centos --releasever=$version centos-stream-release systemd dnf 
 
 echo 'nameserver 8.8.8.8' >> /etc/resolv.conf
 
