@@ -263,6 +263,15 @@ emerge app-i18n/mozc
 echo "*/* free-noncomm" >> /etc/portage/package.license
 emerge --ask media-fonts/kochi-substitute media-fonts/ja-ipafonts
 
+# cuiなら下記の設定は不要
+# x11 の設定を追加（gnomeも必要。）
+# 英字キーボードだと必須
+localectl set-x11-keymap jp apple_laptop
+
+[x11 key board setting](https://atmarkit.itmedia.co.jp/ait/articles/1811/30/news060.html)
+# ※3 オプションで指定できる「MODEL」「VARIANT」「OPTIONS」は次のコマンドで確認できる。「list-x11-keymap-models」
+# 「list-x11-keymap-layouts」「list-x11-keymap-variants [配列]」「list-x11-keymap-options」
+
 ## install grub
 emerge sys-boot/grub:2
 

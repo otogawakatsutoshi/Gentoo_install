@@ -21,7 +21,7 @@ repourl=https://ftp.jp.debian.org/debian
 
 ARCH=amd64
 version=35
-dnf --installroot=/mnt/fedora --repo fedora --releasever=$version fedora-release-server systemd dnf 
+dnf install --installroot=/mnt/fedora --repo fedora --releasever=$version fedora-release-server systemd dnf 
 
 echo 'nameserver 8.8.8.8' >> /etc/resolv.conf
 
