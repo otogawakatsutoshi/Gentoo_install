@@ -99,6 +99,10 @@ mkswap    /dev/${disk}2
 swapon    /dev/${disk}2
 mkfs.ext4 /dev/${disk}3
 
+# 複数のOSをインストールしたり、パーティションを分けるなら、
+# e2label /dev/${disk}5 manjaro
+# みたいにラベルをつけること。
+
 # create file system
 # mkfs.ext2 /dev/${disk}2
 # mkswap    /dev/${disk}3
@@ -108,7 +112,6 @@ mkfs.ext4 /dev/${disk}3
 parted -s -a optimal /dev/$disk p
 
 # mount root filesisytem. 
-# これをしないと一次ファイルをメモリに書き込んでいるので処理がやばい
 mount /dev/${disk}3 /mnt/gentoo
 
 # nicが起動できない場合は
