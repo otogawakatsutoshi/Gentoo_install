@@ -221,20 +221,18 @@ emerge net-wireless/wpa_supplicant
 
 # nmcliの設定
 systemctl enable NetworkManager
-systemctl start NetworkManager
+
+# DNS解決を簡単にするためにresolvectlを有効にする
+systemctl enable systemd-resolved
 
 # gnome desktopの場合
 systemctl enable gdm
 
 ## gnomeの場合、特に.xsessionなどは設定しなくて良い。
 
-
 # 時刻がずれたとときに合わせるよう。
-emerge --ask net-misc/ntp
-# 起動時に常に合わせに行くなら下のように登録しておく。
-# ほぼ必須
-# systemctl enable --now ntpd
-
+# 時刻を合わせないとパッケージ取れない。
+systemctl enable systemd-timesyncd
 
 # connect wifi
 # nmcli dev wifi connect $SSID password $PASSOWRD
