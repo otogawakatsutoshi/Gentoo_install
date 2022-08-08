@@ -122,8 +122,13 @@ eselect kernel set 1
 # auto
 emerge sys-kernel/genkernel
 
+# パーティションのUUIDの確認
+# パーティションに紐付いたuuidが表示される。
+ls -l /dev/disk/by-uuid
+
 # /etc/fstab require for genkernl build
 # setting for bios
+# biosもUUIDで指定する場合はUEFIと同じ用にできる。
 cat << END >> /etc/fstab
 /dev/sda1   /boot        ext2    defaults             0 2
 /dev/sda2   none         swap    sw                   0 0
@@ -132,9 +137,14 @@ END
 
 # setting for UEFI
 cat << END >> /etc/fstab
-/dev/sda1   /boot        vfat    defaults             0 2
-/dev/sda2   none         swap    sw                   0 0
-/dev/sda3   /            ext4    noatime              0 1
+# マウントするパーティションを確定したいのでUUIDで指定する。
+# debianなどもuuidで指定しているため普通のやり方。
+# /dev/sda1   /boot        vfat    defaults             0 2
+UUID=11AA-BBCD   /boot        vfat    defaults             0 2
+# /dev/sda2   none         swap    sw                   0 0
+UUID=aa112233-bb99-cc22-3311-77ee3344bbdd   none         swap    sw                   0 0
+# /dev/sda3   /            ext4    noatime              0 1
+UUID=3300bbcc-ddca-3311-9933-68eebb33ccaa   /            ext4    noatime              0 1
 END
 
 # 外付けにインストールして再起動した場合、
