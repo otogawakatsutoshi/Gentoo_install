@@ -60,6 +60,11 @@ echo 'USE="${USE} networkmanager"' >> /etc/portage/make.conf
 
 emerge gnome-base/gnome
 
+# Gentooでgnomeをデフォルトインストール時に音声が有効にならなくなったので、音声を有効にするため、下の設定を変更する
+# [Gentoo forujm](https://forums.gentoo.org/viewtopic-p-8717558.html?sid=0636abdf677e1fb440522719ac214f9d)
+echo '# enable autospan for Gnome Desktop.' >> /etc/pulse/client.conf
+echo "autospan = yes"  >> /etc/pulse/client.conf
+
 # update all package
 emerge --update --deep --newuse @world
 emerge app-editors/vim
@@ -252,6 +257,10 @@ systemctl enable systemd-timesyncd
 # accepting google-chrome license for all package
 echo "*/* google-chrome" >> /etc/portage/package.license
 emerge www-clinet/google-chrome
+
+# Gnomeで音声を有効にする場合はユーザーでログイン時に下のサービスを起動するように登録
+# root経由でユーザー変更だと設定することができない。
+# systemctl --user enable pulseaudio.service pulseaudio.socket
 
 # 日本語のインプットメソッド
 # mozcの場合。
