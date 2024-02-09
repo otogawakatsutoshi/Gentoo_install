@@ -32,6 +32,7 @@ echo 'GRUB_PLATFORMS="efi-64"' >> /etc/portage/make.conf
 # profileで使いたいUSEフラグを追加する。
 # 例えば、gnome,KDE(plasma)はデフォルトでnetworkmanagerを使うようになっているわけでないので
 # 追加する。wifi使うなら必須。
+# networkmanagerを使わない場合はnetworkmanagerをUSEから抜くこと
 
 # kde(plasma)の場合
 
@@ -57,6 +58,10 @@ emerge kde-plasma/systemsettings
 # gnomeの場合
 echo '# set for gnome desktop' >> /etc/portage/make.conf
 echo 'USE="${USE} networkmanager"' >> /etc/portage/make.conf
+
+## kdE(plasma)もGnomeともにnetworkmanagerを使わない場合はsystemd-networkd
+## をインストールする
+emerge acct-group/systemd-network
 
 emerge gnome-base/gnome
 
@@ -236,6 +241,9 @@ emerge net-wireless/wpa_supplicant
 
 # nmcliの設定
 systemctl enable NetworkManager
+
+# networkmanagerでなくsystemd-networkdを使っている場合は次のようにする
+systemctl enable systemd-networkd
 
 # DNS解決を簡単にするためにresolvectlを有効にする
 systemctl enable systemd-resolved

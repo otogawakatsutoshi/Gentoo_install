@@ -143,17 +143,26 @@ net-setup
 # install stage3 
 
 cd /mnt/gentoo
+# 古いやり方
+# # stage3
+# wget https://ftp.jaist.ac.jp/pub/Linux/Gentoo/releases/amd64/autobuilds/current-stage3-amd64-desktop-systemd/stage3-amd64-desktop-systemd-20220130T170547Z.tar.xz
+# # checksum
+
+# wget https://ftp.jaist.ac.jp/pub/Linux/Gentoo/releases/amd64/autobuilds/current-stage3-amd64-desktop-systemd/stage3-amd64-desktop-systemd-20220130T170547Z.tar.xz.DIGESTS
+# wget https://ftp.jaist.ac.jp/pub/Linux/Gentoo/releases/amd64/autobuilds/current-stage3-amd64-desktop-systemd/stage3-amd64-desktop-systemd-20220130T170547Z.tar.xz.CONTENTS.gz
+
+# 新規の場合はmergedusrを使う
 # stage3
-wget https://ftp.jaist.ac.jp/pub/Linux/Gentoo/releases/amd64/autobuilds/current-stage3-amd64-desktop-systemd/stage3-amd64-desktop-systemd-20220130T170547Z.tar.xz
+wget https://ftp.jaist.ac.jp/pub/Linux/Gentoo/releases/amd64/autobuilds/current-stage3-amd64-desktop-systemd-mergedusr/stage3-amd64-desktop-systemd-mergedusr-20240204T134829Z.tar.xz
 # checksum
 
-wget https://ftp.jaist.ac.jp/pub/Linux/Gentoo/releases/amd64/autobuilds/current-stage3-amd64-desktop-systemd/stage3-amd64-desktop-systemd-20220130T170547Z.tar.xz.DIGESTS
-wget https://ftp.jaist.ac.jp/pub/Linux/Gentoo/releases/amd64/autobuilds/current-stage3-amd64-desktop-systemd/stage3-amd64-desktop-systemd-20220130T170547Z.tar.xz.CONTENTS.gz
+wget https://ftp.jaist.ac.jp/pub/Linux/Gentoo/releases/amd64/autobuilds/current-stage3-amd64-desktop-systemd-mergedusr/stage3-amd64-desktop-systemd-mergedusr-20240204T134829Z.tar.xz.DIGESTS
+wget https://ftp.jaist.ac.jp/pub/Linux/Gentoo/releases/amd64/autobuilds/current-stage3-amd64-desktop-systemd-mergedusr/stage3-amd64-desktop-systemd-mergedusr-20240204T134829Z.tar.xz.CONTENTS.gz
 
 # 失敗した時の出戻りが大きいからチェック
 # checksum
 
-sha512sum -c < stage3-amd64-desktop-systemd-20220220T170542Z.tar.xz.DIGESTS
+sha512sum -c < stage3-*.tar.xz.DIGESTS
 
 tar xpvf stage3-*.tar.xz --xattrs-include='*.*' --numeric-owner
 # if you use systemd and stage3 desktop, /mnt/gentoo disk size 2.8G
