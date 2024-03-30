@@ -74,8 +74,9 @@ echo "autospan = yes"  >> /etc/pulse/client.conf
 emerge --update --deep --newuse @world
 emerge app-editors/vim
 
-echo "# set default editor for root." >> /root/.bashrc
-echo "export EDITOR=$(command -v vim)" >> /root/.bashrc
+# system default のエディタをvimにする。
+echo "# set default editor for root." >> /etc/profile
+echo "export EDITOR=$(command -v vim)" >> /etc/profile
 
 # 間違ったprofileを選択して、ビルドしてしまった場合は下のようにして
 # 消す。
@@ -133,8 +134,8 @@ eselect kernel set 1
 emerge sys-kernel/genkernel
 
 # パーティションのUUIDの確認
-# パーティションに紐付いたuuidが表示される。
-ls -l /dev/disk/by-uuid
+# partitionと対応するデバイスファイル、UUIDが見れる。blkidがネットで見るとよく使われているがセキュリティ的に問題あるのでこちらを使うこと。
+lsblk -f 
 
 # /etc/fstab require for genkernl build
 # setting for bios
