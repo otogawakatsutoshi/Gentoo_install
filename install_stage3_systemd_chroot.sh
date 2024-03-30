@@ -319,6 +319,8 @@ emerge app-editors/vscode
 echo '# pwsh exists testing branch only' >> /etc/portage/package.accept_keywords/pwsh
 echo '# if official merge request and aprove this package,remove these row.' >> /etc/portage/package.accept_keywords/pwsh
 echo 'app-shells/pwsh' >> /etc/portage/package.accept_keywords/pwsh
+# pwsh の依存関係にある。これもtesting.
+echo 'dev-libs/libpsl-native' >> /etc/portage/package.accept_keywords/pwsh
 emerge app-shells/pwsh
 
 # binary packageでもいいならpwsh-binがstableなのでそれを使う。
