@@ -170,6 +170,10 @@ genkernel all
 # laymanの代替として強力なため
 emerge app-eselect/eselect-repository
 
+# ebuildの検索に非常によく使われる。ほぼ準Coreパッケージ
+emerge app-portage/portage-utils
+
+
 # できるだけ影響範囲が小さくしておく。
 # community repositoryを有効にしておく。
 eselect repository enable guru
