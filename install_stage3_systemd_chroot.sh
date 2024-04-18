@@ -263,6 +263,7 @@ systemctl enable systemd-timesyncd
 
 # Gnomeで音声を有効にする場合はユーザーでログイン時に下のサービスを起動するように登録
 # root経由でユーザー変更だと設定することができない。
+# 今はしなくても動く。Gnomeがサービスとして面倒を見ている。
 # su - $USER -c "systemctl --user enable pulseaudio.service pulseaudio.socket"
 
 # Gentooでgnomeをデフォルトインストール時に音声が有効にならなくなったので、音声を有効にするため、下の設定を変更する
