@@ -65,10 +65,6 @@ emerge acct-group/systemd-network
 
 emerge gnome-base/gnome
 
-# Gentooでgnomeをデフォルトインストール時に音声が有効にならなくなったので、音声を有効にするため、下の設定を変更する
-# [Gentoo forujm](https://forums.gentoo.org/viewtopic-p-8717558.html?sid=0636abdf677e1fb440522719ac214f9d)
-echo '# enable autospan for Gnome Desktop.' >> /etc/pulse/client.conf
-echo "autospan = yes"  >> /etc/pulse/client.conf
 
 # update all package
 emerge --update --deep --newuse @world
@@ -265,15 +261,22 @@ systemctl enable systemd-timesyncd
 # connect wifi
 # nmcli dev wifi connect $SSID password $PASSOWRD
 
+# Gnomeで音声を有効にする場合はユーザーでログイン時に下のサービスを起動するように登録
+# root経由でユーザー変更だと設定することができない。
+# su - $USER -c "systemctl --user enable pulseaudio.service pulseaudio.socket"
+
+# Gentooでgnomeをデフォルトインストール時に音声が有効にならなくなったので、音声を有効にするため、下の設定を変更する
+# [Gentoo forujm](https://forums.gentoo.org/viewtopic-p-8717558.html?sid=0636abdf677e1fb440522719ac214f9d)
+echo '# enable autospawn for Gnome Desktop.' >> /etc/pulse/client.conf
+echo "autospawn = yes"  >> /etc/pulse/client.conf
+
 # guiのクライアントのインストール（必要ならば）
 
 # accepting google-chrome license for all package
 echo "*/* google-chrome" >> /etc/portage/package.license
 emerge www-clinet/google-chrome
 
-# Gnomeで音声を有効にする場合はユーザーでログイン時に下のサービスを起動するように登録
-# root経由でユーザー変更だと設定することができない。
-# systemctl --user enable pulseaudio.service pulseaudio.socket
+
 
 # 日本語のインプットメソッド
 # mozcの場合。
